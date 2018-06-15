@@ -7,7 +7,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
@@ -52,6 +51,7 @@ public class MovieCardAdapter extends RecyclerView.Adapter<MovieCardAdapter.View
     public static class ViewHolder extends RecyclerView.ViewHolder {
         private ImageView imageView_poster;
         private TextView textView_title;
+        private TextView textView_overview;
         private TextView textView_year;
 
 
@@ -59,6 +59,7 @@ public class MovieCardAdapter extends RecyclerView.Adapter<MovieCardAdapter.View
             super(itemView);
             this.imageView_poster = (ImageView) itemView.findViewById(R.id.imageView_poster);
             this.textView_title = (TextView) itemView.findViewById(R.id.textView_title);
+            this.textView_overview = (TextView) itemView.findViewById(R.id.textView_overview);
             this.textView_year = (TextView) itemView.findViewById(R.id.textView_year);
         }
 
@@ -67,6 +68,8 @@ public class MovieCardAdapter extends RecyclerView.Adapter<MovieCardAdapter.View
             final int movieId = movie.getId();
 
             this.textView_title.setText(movie.getTitle());
+            this.textView_overview.setText(movie.getOverview());
+
             String releaseDate = movie.getReleaseDate();
             //String year = context.getString(R.string.adapter_movie_card_adapter_old);
             String year = "Old";
@@ -78,15 +81,6 @@ public class MovieCardAdapter extends RecyclerView.Adapter<MovieCardAdapter.View
                     .load(Util.IMG_BASE_URL_LOW_RES + movie.getBackdropPath())
                     .placeholder(context.getDrawable(R.mipmap.ic_launcher_foreground))
                     .fit().into(this.imageView_poster);
-
-
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Toast.makeText(context, "Movie ID: " + movieId, Toast.LENGTH_SHORT).show();
-                }
-            });
-
         }
     }
 }

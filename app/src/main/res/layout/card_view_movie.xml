@@ -22,8 +22,7 @@
             android:layout_height="225dp"
             android:layout_alignParentTop="true"
             android:background="@color/colorPrimaryText"
-            android:contentDescription="Descripcion movie poster"
-            android:src="@mipmap/ic_launcher" />
+            android:contentDescription="Descripcion movie poster" />
 
         <android.support.v7.widget.CardView
             android:id="@+id/cardView_year"
@@ -48,7 +47,6 @@
                 android:layout_height="wrap_content"
                 android:maxLines="1"
                 android:padding="2dp"
-                android:text="2005"
                 android:textColor="@color/colorPrimaryText"
                 android:textSize="14sp"
                 android:textStyle="italic|bold" />
@@ -71,7 +69,6 @@
                 android:layout_marginStart="6dp"
                 android:gravity="center_vertical"
                 android:maxLines="2"
-                android:text="Titulo de la movie"
                 android:textColor="#FFF"
                 android:textSize="14.5sp"
                 android:textStyle="bold" />
@@ -85,7 +82,6 @@
                 android:layout_marginStart="6dp"
                 android:layout_marginTop="10dp"
                 android:gravity="left"
-                android:text="Overview de la movie. Over view de la movie. Over view de la movie. Over view de la movie. Over view de la movie. Over view de la movie. Over view de la movie. "
                 android:textColor="#FFF" />
 
         </LinearLayout>
