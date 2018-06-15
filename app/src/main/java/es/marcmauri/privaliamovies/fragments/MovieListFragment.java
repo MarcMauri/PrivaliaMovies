@@ -11,19 +11,27 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import es.marcmauri.privaliamovies.R;
 import es.marcmauri.privaliamovies.adapters.MovieCardAdapter;
+import es.marcmauri.privaliamovies.models.FoundMovies;
 import es.marcmauri.privaliamovies.models.Movie;
+import es.marcmauri.privaliamovies.services.API;
+import es.marcmauri.privaliamovies.services.APIServices.MoviesService;
+import es.marcmauri.privaliamovies.utils.Util;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class MovieListFragment extends Fragment {
+public class MovieListFragment extends Fragment implements Callback<FoundMovies> {
 
     private LinearLayout linearLayout_progressbar;
 
@@ -32,6 +40,7 @@ public class MovieListFragment extends Fragment {
     private RecyclerView.LayoutManager mLayoutManager;
 
     private List<Movie> movies;
+    private Call<FoundMovies> foundMoviesCall;
 
 
     public MovieListFragment() {
@@ -42,7 +51,8 @@ public class MovieListFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        movies = getMockData();
+        //movies = getMockData();
+        movies = new ArrayList<>();
     }
 
     @Override
@@ -63,9 +73,20 @@ public class MovieListFragment extends Fragment {
         mAdapter = new MovieCardAdapter(this.movies, R.layout.card_view_movie, getContext());
         mRecyclerView.setAdapter(mAdapter);
 
-        linearLayout_progressbar.setVisibility(View.GONE);
+        /* Time to get movies */
+        linearLayout_progressbar.setVisibility(View.VISIBLE);
+        getMovies();
 
         return view;
+    }
+
+
+    /* CUSTOMIZATION */
+
+    private void getMovies() {
+        MoviesService service = API.getTmdbApi().create(MoviesService.class);
+        foundMoviesCall = service.getMoviesByType(Util.TAG_MOVIE_TYPE_POPULAR, 1, Util.getDeviceLanguage(getContext()), API.TMDB_KEY);
+        foundMoviesCall.enqueue(this);
     }
 
     private List<Movie> getMockData() {
@@ -80,4 +101,32 @@ public class MovieListFragment extends Fragment {
         }};
     }
 
+
+    /* EVENTS */
+
+    @Override
+    public void onResponse(Call<FoundMovies> call, Response<FoundMovies> response) {
+        if (response.isSuccessful()) {
+            linearLayout_progressbar.setVisibility(View.GONE);
+
+            List<Movie> _movies;
+            if ((_movies = response.body().getMovies()) != null && !_movies.isEmpty()) {
+                this.movies.addAll(_movies);
+                mAdapter.notifyDataSetChanged();
+            } else {
+                Toast.makeText(getContext(), "An error has occurred within successful response", Toast.LENGTH_SHORT).show();
+            }
+        } else {
+            Toast.makeText(getContext(), "Se produjo un error con los parametros de llamada", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public void onFailure(Call<FoundMovies> call, Throwable t) {
+        if (!foundMoviesCall.isCanceled()) {
+            linearLayout_progressbar.setVisibility(View.GONE);
+            //Toast.makeText(getContext(), getString(R.string.error_occurred), Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "An error has been occurred", Toast.LENGTH_SHORT).show();
+        }
+    }
 }

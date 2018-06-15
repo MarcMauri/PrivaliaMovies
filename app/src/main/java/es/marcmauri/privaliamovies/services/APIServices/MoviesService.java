@@ -9,7 +9,7 @@ import retrofit2.http.Query;
 public interface MoviesService {
 
     @GET("movie/{type}")
-    Call<FoundMovies> getMoviesByType(@Path("type") String type, @Query("page") String page, @Query("language") String lang, @Query("api_key") String key);
+    Call<FoundMovies> getMoviesByType(@Path("type") String type, @Query("page") int page, @Query("language") String lang, @Query("api_key") String key);
 
     @GET("search/movie")
     Call<FoundMovies> getMoviesByQuery(@Query("query") String query, @Query("page") String page, @Query("language") String lang, @Query("api_key") String key);
