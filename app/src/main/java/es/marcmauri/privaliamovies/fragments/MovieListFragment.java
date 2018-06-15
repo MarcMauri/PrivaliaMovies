@@ -39,6 +39,11 @@ public class MovieListFragment extends Fragment implements Callback<FoundMovies>
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
 
+    private int totalPages;
+    private int nextPage = 1;
+    private boolean loading = false;
+    int pastVisibleItems, visibleItemCount, totalItemCount;
+
     private List<Movie> movies;
     private Call<FoundMovies> foundMoviesCall;
 
@@ -69,13 +74,43 @@ public class MovieListFragment extends Fragment implements Callback<FoundMovies>
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mLayoutManager = new LinearLayoutManager(getContext());
         mRecyclerView.setLayoutManager(this.mLayoutManager);
+        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+
+                // Here get the child count, item count and visibleitems
+                // from layout manager
+                visibleItemCount = mLayoutManager.getChildCount();
+                totalItemCount = mLayoutManager.getItemCount();
+                pastVisibleItems = ((LinearLayoutManager) mLayoutManager).findFirstVisibleItemPosition();
+
+                // Just when we go down
+                if (dy > 0) {
+                    // Now check if userScrolled is true and also check if
+                    // the item is end then update recycler view and set
+                    // userScrolled to false
+                    if (!loading && (totalItemCount - visibleItemCount) <= (pastVisibleItems)) {
+                        loading = true;
+                        ++nextPage;
+
+                        if (nextPage <= totalPages) {
+                            linearLayout_progressbar.setVisibility(View.VISIBLE);
+                            getMovies(nextPage);
+                        } else {
+                            Toast.makeText(getContext(), "No more movies to show", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                }
+            }
+        });
 
         mAdapter = new MovieCardAdapter(this.movies, R.layout.card_view_movie, getContext());
         mRecyclerView.setAdapter(mAdapter);
 
-        /* Time to get movies */
+        /* Get movies for first time */
         linearLayout_progressbar.setVisibility(View.VISIBLE);
-        getMovies();
+        getMovies(nextPage);
 
         return view;
     }
@@ -83,22 +118,10 @@ public class MovieListFragment extends Fragment implements Callback<FoundMovies>
 
     /* CUSTOMIZATION */
 
-    private void getMovies() {
+    private void getMovies(int page) {
         MoviesService service = API.getTmdbApi().create(MoviesService.class);
-        foundMoviesCall = service.getMoviesByType(Util.TAG_MOVIE_TYPE_POPULAR, 1, Util.getDeviceLanguage(getContext()), API.TMDB_KEY);
+        foundMoviesCall = service.getMoviesByType(Util.TAG_MOVIE_TYPE_POPULAR, page, Util.getDeviceLanguage(getContext()), API.TMDB_KEY);
         foundMoviesCall.enqueue(this);
-    }
-
-    private List<Movie> getMockData() {
-        return new ArrayList<Movie>() {{
-            add(new Movie(351286, "Jurassic World: Fallen Kingdom", "Jurassic World: Fallen Kingdom", "/c9XxwwhPHdaImA2f1WEfEsbhaFB.jpg", "/gBmrsugfWpiXRh13Vo3j0WW55qD.jpg", "A volcanic eruption threatens the remaining dinosaurs on the island of Isla Nublar, where the creatures have freely roamed for several years after the demise of an animal theme park known as Jurassic World. Claire Dearing, the former park manager, has now founded the Dinosaur Protection Group, an organization dedicated to protecting the dinosaurs. To help with her cause, Claire has recruited Owen Grady, a former dinosaur trainer who worked at the park, to prevent the extinction of the dinosaurs once again.", "2018-06-06"));
-            add(new Movie(383498, "Deadpool 2", "Deadpool 2", "/to0spRl1CMDvyUbOnbb4fTk3VAd.jpg", "/3P52oz9HPQWxcwHOwxtyrVV1LKi.jpg", "Wisecracking mercenary Deadpool battles the evil and powerful Cable and other bad guys to save a boy's life.", "2018-05-15"));
-            add(new Movie(297762, "Wonder Woman", "Wonder Woman", "/imekS7f1OuHyUP2LAiTEM0zBzUz.jpg", "xx/6iUNJZymJBMXXriQyFZfLAKnjO6.jpg", "An Amazon princess comes to the world of Man in the grips of the First World War to confront the forces of evil and bring an end to human conflict.", "2017-05-30"));
-            add(new Movie(351286, "Jurassic World", "Jurassic World", "/jjBgi2r5cRt36xF6iNUEhzscEcb.jpg", "/t5KONotASgVKq4N19RyhIthWOPG.jpg", "Twenty-two years after the events of Jurassic Park, Isla Nublar now features a fully functioning dinosaur theme park, Jurassic World, as originally envisioned by John Hammond.", "2015-06-06"));
-            add(new Movie(525102, "Girl Lost", "Girl Lost", "/n3PDMPyFG04bcXUHHhRIwWd9cx1.jpg", "/j3FnUedjz0NHYFfZ62u9WsBU0wy.jpg", "Girl Lost tackles the issue of underage prostitution as told through the eyes of a wayward teen. Groomed by her own mother to work in the underbelly of Los Angeles, the young girl struggles to survive in this dark world.", "2018-05-01"));
-            add(new Movie(337167, "Fifty Shades Freed", "Fifty Shades Freed", "/jjPJ4s3DWZZvI4vw8Xfi4Vqa1Q8.jpg", "/9ywA15OAiwjSTvg3cBs9B7kOCBF.jpg", "Believing they have left behind shadowy figures from their past, newlyweds Christian and Ana fully embrace an inextricable connection and shared life of luxury. But just as she steps into her role as Mrs. Grey and he relaxes into an unfamiliar stability, new threats could jeopardize their happy ending before it even begins.", "2018-01-17"));
-            add(new Movie(80752, "The Dark Side of Love", "Fotografando Patrizia", "/eYO04ARWm4gT7yhakM7C6I7vT2n.jpg", "/u5Qpck9L544iVMO2zHXYzXCL8aZ.jpg", "The sexual relationship between a successful woman and her brother, an introvert, hypochondriacal youth, who is also a pornophile.", "1984-12-01"));
-        }};
     }
 
 
@@ -108,11 +131,15 @@ public class MovieListFragment extends Fragment implements Callback<FoundMovies>
     public void onResponse(Call<FoundMovies> call, Response<FoundMovies> response) {
         if (response.isSuccessful()) {
             linearLayout_progressbar.setVisibility(View.GONE);
+            loading = false;
 
             List<Movie> _movies;
             if ((_movies = response.body().getMovies()) != null && !_movies.isEmpty()) {
+
+                if (nextPage == 1) totalPages = response.body().getFoundPages();
                 this.movies.addAll(_movies);
                 mAdapter.notifyDataSetChanged();
+
             } else {
                 Toast.makeText(getContext(), "An error has occurred within successful response", Toast.LENGTH_SHORT).show();
             }
