@@ -5,10 +5,42 @@
     android:layout_height="match_parent"
     tools:context=".fragments.MovieListFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="Fragmento en blanco" />
+        android:orientation="vertical">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recyclerView_movies"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.94"
+            android:scrollbars="vertical" />
+
+        <LinearLayout
+            android:id="@+id/linearLayout_progressbar"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.06"
+            android:background="@color/colorPrimaryLight"
+            android:orientation="horizontal">
+
+            <ProgressBar
+                android:id="@+id/progressBar_loading"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="start"
+                android:padding="8dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:text="Loading new content..."
+                android:textSize="21sp" />
+
+        </LinearLayout>
+
+    </LinearLayout>
 
 </FrameLayout>
