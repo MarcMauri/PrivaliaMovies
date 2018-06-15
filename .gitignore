@@ -1,0 +1,21 @@
+*.iml
+.gradle
+/local.properties
+/.idea/libraries
+/.idea/modules.xml
+/.idea/workspace.xml
+.DS_Store
+/build
+/captures
+.externalNativeBuild
+
+# Archivos generados automaticamente por el IDE.
+build.xml
+ant.properties
+local.properties
+project.properties
+
+# Archivos generados
+bin/
+out/
+gen/
