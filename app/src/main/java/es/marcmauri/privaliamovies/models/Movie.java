@@ -1,14 +1,24 @@
 package es.marcmauri.privaliamovies.models;
 
+import com.google.gson.annotations.SerializedName;
+
 public class Movie {
 
+    @SerializedName("id")
     private int id;
+    @SerializedName("title")
     private String title;
+    @SerializedName("original_title")
     private String originTitle;
+    @SerializedName("poster_path")
     private String posterPath;
+    @SerializedName("backdrop_path")
     private String backdropPath;
+    @SerializedName("overview")
     private String overview;
+    @SerializedName("release_date")
     private String releaseDate;     //Pattern: "yyyy-MM-dd"
+
 
     public Movie() {
     }

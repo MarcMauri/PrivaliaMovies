@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -43,7 +42,7 @@ public class MovieListFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        movies = mockData();
+        movies = getMockData();
     }
 
     @Override
@@ -52,6 +51,7 @@ public class MovieListFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_movie_list, container, false);
 
+        /* BIND UI */
         linearLayout_progressbar = view.findViewById(R.id.linearLayout_progressbar);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recyclerView_movies);
 
@@ -68,7 +68,7 @@ public class MovieListFragment extends Fragment {
         return view;
     }
 
-    private List<Movie> mockData() {
+    private List<Movie> getMockData() {
         return new ArrayList<Movie>() {{
             add(new Movie(351286, "Jurassic World: Fallen Kingdom", "Jurassic World: Fallen Kingdom", "/c9XxwwhPHdaImA2f1WEfEsbhaFB.jpg", "/gBmrsugfWpiXRh13Vo3j0WW55qD.jpg", "A volcanic eruption threatens the remaining dinosaurs on the island of Isla Nublar, where the creatures have freely roamed for several years after the demise of an animal theme park known as Jurassic World. Claire Dearing, the former park manager, has now founded the Dinosaur Protection Group, an organization dedicated to protecting the dinosaurs. To help with her cause, Claire has recruited Owen Grady, a former dinosaur trainer who worked at the park, to prevent the extinction of the dinosaurs once again.", "2018-06-06"));
             add(new Movie(383498, "Deadpool 2", "Deadpool 2", "/to0spRl1CMDvyUbOnbb4fTk3VAd.jpg", "/3P52oz9HPQWxcwHOwxtyrVV1LKi.jpg", "Wisecracking mercenary Deadpool battles the evil and powerful Cable and other bad guys to save a boy's life.", "2018-05-15"));
