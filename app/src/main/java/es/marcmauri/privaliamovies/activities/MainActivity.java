@@ -1,9 +1,12 @@
-package es.marcmauri.privaliamovies;
+package es.marcmauri.privaliamovies.activities;
 
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.TextView;
+
+import es.marcmauri.privaliamovies.fragments.MovieListFragment;
+import es.marcmauri.privaliamovies.R;
 
 public class MainActivity extends AppCompatActivity {
 
