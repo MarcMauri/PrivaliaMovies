@@ -8,6 +8,12 @@ public class Util {
 
     /* VARIABLES */
     public static final String TAG_MOVIE_TYPE_POPULAR = "popular";
+    public static final String FRAGMENT_BUNDLE_PROPERTY_FLOW = "flow";
+    public static final String FRAGMENT_BUNDLE_PROPERTY_QUERY = "query";
+
+    /* MOVIE LIST FLOW */
+    public static final int MOVIE_LIST_FLOW_POPULAR = 10;
+    public static final int MOVIE_LIST_FLOW_SEARCH = 20;
 
     /* URL PATHs */
     public static final String IMG_BASE_URL_LOW_RES = "https://image.tmdb.org/t/p/w300";

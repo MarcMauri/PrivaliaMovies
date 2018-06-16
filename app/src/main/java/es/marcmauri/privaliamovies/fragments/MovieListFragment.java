@@ -7,6 +7,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,7 +34,8 @@ import retrofit2.Response;
  */
 public class MovieListFragment extends Fragment implements Callback<FoundMovies> {
 
-    private LinearLayout linearLayout_progressbar;
+    private int MOVIE_LIST_FLOW;
+    private String MOVIE_LIST_QUERY;
 
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
@@ -43,6 +45,7 @@ public class MovieListFragment extends Fragment implements Callback<FoundMovies>
     private int nextPage = 1;
     private boolean loading = false;
     int pastVisibleItems, visibleItemCount, totalItemCount;
+    private LinearLayout linearLayout_progressbar;
 
     private List<Movie> movies;
     private Call<FoundMovies> foundMoviesCall;
@@ -56,7 +59,6 @@ public class MovieListFragment extends Fragment implements Callback<FoundMovies>
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //movies = getMockData();
         movies = new ArrayList<>();
     }
 
@@ -70,6 +72,32 @@ public class MovieListFragment extends Fragment implements Callback<FoundMovies>
         linearLayout_progressbar = view.findViewById(R.id.linearLayout_progressbar);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recyclerView_movies);
 
+        /* Get data from Bundle */
+        MOVIE_LIST_FLOW = getArguments().getInt(Util.FRAGMENT_BUNDLE_PROPERTY_FLOW, 0);
+        if (MOVIE_LIST_FLOW == Util.MOVIE_LIST_FLOW_SEARCH) {
+            MOVIE_LIST_QUERY = getArguments().getString(Util.FRAGMENT_BUNDLE_PROPERTY_QUERY, "");
+        }
+
+        /* Configure recyclerview */
+        setRecyclerView();
+
+        /* Get movies if possible */
+        if (MOVIE_LIST_FLOW == Util.MOVIE_LIST_FLOW_SEARCH
+                && TextUtils.isEmpty(MOVIE_LIST_QUERY))
+            clearMovieList();
+        else
+            getMovies(nextPage);
+
+        return view;
+    }
+
+    private void clearMovieList() {
+        this.movies.clear();
+        mAdapter.notifyDataSetChanged();
+        linearLayout_progressbar.setVisibility(View.GONE);
+    }
+
+    private void setRecyclerView() {
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mLayoutManager = new LinearLayoutManager(getContext());
@@ -79,17 +107,14 @@ public class MovieListFragment extends Fragment implements Callback<FoundMovies>
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
 
-                // Here get the child count, item count and visibleitems
-                // from layout manager
+                // Here get the child count, item count and visible items from layout manager
                 visibleItemCount = mLayoutManager.getChildCount();
                 totalItemCount = mLayoutManager.getItemCount();
                 pastVisibleItems = ((LinearLayoutManager) mLayoutManager).findFirstVisibleItemPosition();
 
                 // Just when we go down
                 if (dy > 0) {
-                    // Now check if userScrolled is true and also check if
-                    // the item is end then update recycler view and set
-                    // userScrolled to false
+                    // Check if not loading and we are on bottom
                     if (!loading && (totalItemCount - visibleItemCount) <= (pastVisibleItems)) {
                         loading = true;
                         ++nextPage;
@@ -107,20 +132,29 @@ public class MovieListFragment extends Fragment implements Callback<FoundMovies>
 
         mAdapter = new MovieCardAdapter(this.movies, R.layout.card_view_movie, getContext());
         mRecyclerView.setAdapter(mAdapter);
-
-        /* Get movies for first time */
-        linearLayout_progressbar.setVisibility(View.VISIBLE);
-        getMovies(nextPage);
-
-        return view;
     }
 
-
-    /* CUSTOMIZATION */
-
     private void getMovies(int page) {
+        linearLayout_progressbar.setVisibility(View.VISIBLE);
+
         MoviesService service = API.getTmdbApi().create(MoviesService.class);
-        foundMoviesCall = service.getMoviesByType(Util.TAG_MOVIE_TYPE_POPULAR, page, Util.getDeviceLanguage(getContext()), API.TMDB_KEY);
+
+        switch (MOVIE_LIST_FLOW) {
+            case Util.MOVIE_LIST_FLOW_SEARCH:
+                foundMoviesCall = service.getMoviesByQuery(
+                        MOVIE_LIST_QUERY,
+                        page,
+                        Util.getDeviceLanguage(getContext()),
+                        API.TMDB_KEY);
+                break;
+            default:
+                foundMoviesCall = service.getMoviesByType(
+                        Util.TAG_MOVIE_TYPE_POPULAR,
+                        page,
+                        Util.getDeviceLanguage(getContext()),
+                        API.TMDB_KEY);
+        }
+
         foundMoviesCall.enqueue(this);
     }
 
@@ -141,7 +175,7 @@ public class MovieListFragment extends Fragment implements Callback<FoundMovies>
                 mAdapter.notifyDataSetChanged();
 
             } else {
-                Toast.makeText(getContext(), "An error has occurred within successful response", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getContext(), "An error has occurred within successful response", Toast.LENGTH_SHORT).show();
             }
         } else {
             Toast.makeText(getContext(), "Se produjo un error con los parametros de llamada", Toast.LENGTH_SHORT).show();
