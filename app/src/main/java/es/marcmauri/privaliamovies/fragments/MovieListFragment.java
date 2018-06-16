@@ -73,7 +73,9 @@ public class MovieListFragment extends Fragment implements Callback<FoundMovies>
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recyclerView_movies);
 
         /* Get data from Bundle */
-        MOVIE_LIST_FLOW = getArguments().getInt(Util.FRAGMENT_BUNDLE_PROPERTY_FLOW, 0);
+        MOVIE_LIST_FLOW = getArguments().getInt(
+                Util.FRAGMENT_BUNDLE_PROPERTY_FLOW,
+                Util.MOVIE_LIST_FLOW_POPULAR);
         if (MOVIE_LIST_FLOW == Util.MOVIE_LIST_FLOW_SEARCH) {
             MOVIE_LIST_QUERY = getArguments().getString(Util.FRAGMENT_BUNDLE_PROPERTY_QUERY, "");
         }
@@ -81,7 +83,7 @@ public class MovieListFragment extends Fragment implements Callback<FoundMovies>
         /* Configure recyclerview */
         setRecyclerView();
 
-        /* Get movies if possible */
+        /* Get movies if possible. Otherwise clear movie list */
         if (MOVIE_LIST_FLOW == Util.MOVIE_LIST_FLOW_SEARCH
                 && TextUtils.isEmpty(MOVIE_LIST_QUERY))
             clearMovieList();
@@ -89,12 +91,6 @@ public class MovieListFragment extends Fragment implements Callback<FoundMovies>
             getMovies(nextPage);
 
         return view;
-    }
-
-    private void clearMovieList() {
-        this.movies.clear();
-        mAdapter.notifyDataSetChanged();
-        linearLayout_progressbar.setVisibility(View.GONE);
     }
 
     private void setRecyclerView() {
@@ -156,6 +152,12 @@ public class MovieListFragment extends Fragment implements Callback<FoundMovies>
         }
 
         foundMoviesCall.enqueue(this);
+    }
+
+    private void clearMovieList() {
+        this.movies.clear();
+        mAdapter.notifyDataSetChanged();
+        linearLayout_progressbar.setVisibility(View.GONE);
     }
 
 

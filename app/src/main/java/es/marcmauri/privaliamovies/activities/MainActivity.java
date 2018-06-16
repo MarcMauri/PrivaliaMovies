@@ -1,8 +1,9 @@
 package es.marcmauri.privaliamovies.activities;
 
+import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.Menu;
@@ -13,17 +14,18 @@ import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import es.marcmauri.privaliamovies.fragments.MovieListFragment;
 import es.marcmauri.privaliamovies.R;
+import es.marcmauri.privaliamovies.fragments.MovieListFragment;
 import es.marcmauri.privaliamovies.utils.Util;
 
 public class MainActivity extends AppCompatActivity {
 
+    private int CURRENT_FLOW;
+    private boolean doubleBackToExitPressedOnce = false;
 
     private TextView toolbar_title;
     private SearchView searchView;
 
-    private boolean isQueryTextSubmitted = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,7 +41,6 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
-        //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     private void setFragmentByDefault() {
@@ -47,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void changeFragmentToPopularMovies() {
+        this.CURRENT_FLOW = Util.MOVIE_LIST_FLOW_POPULAR;
         MovieListFragment fragment = new MovieListFragment();
 
         Bundle bundle = new Bundle();
@@ -57,6 +59,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void changeFragmentToSearchedMovies(final String query) {
+        this.CURRENT_FLOW = Util.MOVIE_LIST_FLOW_SEARCH;
         MovieListFragment fragment = new MovieListFragment();
 
         Bundle bundle = new Bundle();
@@ -86,6 +89,7 @@ public class MainActivity extends AppCompatActivity {
         searchView.setOnSearchClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // Hide app name when search button is pressed
                 toolbar_title.setVisibility(View.GONE);
             }
         });
@@ -93,14 +97,16 @@ public class MainActivity extends AppCompatActivity {
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                // Do nothing, then keyboard just disappears
-                return false;
+                // Do nothing, just hide the keyboard
+                searchView.clearFocus();
+                return true;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                // if query available, get movies by search
-                if (!TextUtils.isEmpty(newText)) changeFragmentToSearchedMovies(newText);
+                // if query available get the those movies
+                if (!TextUtils.isEmpty(newText))
+                    changeFragmentToSearchedMovies(newText);
                 return false;
             }
         });
@@ -117,6 +123,40 @@ public class MainActivity extends AppCompatActivity {
         });
 
         return true;
+    }
+
+    @Override
+    public void onBackPressed() {
+
+        switch (this.CURRENT_FLOW) {
+            case Util.MOVIE_LIST_FLOW_SEARCH:
+                closeSearchBox();
+                changeFragmentToPopularMovies();
+                break;
+            default:
+                if (doubleBackToExitPressedOnce) {
+                    super.onBackPressed();
+                } else {
+                    this.doubleBackToExitPressedOnce = true;
+                    Toast.makeText(this, "Back again to exit", Toast.LENGTH_SHORT).show();
+
+                    new Handler().postDelayed(new Runnable() {
+
+                        @Override
+                        public void run() {
+                            doubleBackToExitPressedOnce = false;
+                        }
+                    }, 2500);
+                }
+        }
+    }
+
+    void closeSearchBox() {
+        if (!searchView.isIconified()) {
+            searchView.setQuery("", false);
+            searchView.setIconified(true);
+            searchView.clearFocus();
+        }
     }
 
     private void bindUI() {
