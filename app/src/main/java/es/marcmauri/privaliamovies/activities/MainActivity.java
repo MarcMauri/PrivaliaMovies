@@ -10,6 +10,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -26,6 +27,9 @@ public class MainActivity extends AppCompatActivity {
     private TextView toolbar_title;
     private SearchView searchView;
 
+    private TextView actionBar_subtitle;
+    private ImageView imageView_arrowBack;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +45,19 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
+
+        // Set subtitle back arrow behavior
+        this.imageView_arrowBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                closeSearchBoxAndGoToPopularMovies();
+            }
+        });
+    }
+
+    private void setSubtitle(final boolean isArrowBack, final String name) {
+        this.imageView_arrowBack.setVisibility(isArrowBack ? View.VISIBLE : View.GONE);
+        this.actionBar_subtitle.setText(name);
     }
 
     private void setFragmentByDefault() {
@@ -49,6 +66,8 @@ public class MainActivity extends AppCompatActivity {
 
     private void changeFragmentToPopularMovies() {
         this.CURRENT_FLOW = Util.MOVIE_LIST_FLOW_POPULAR;
+        setSubtitle(false, "Popular movies");
+
         MovieListFragment fragment = new MovieListFragment();
 
         Bundle bundle = new Bundle();
@@ -60,6 +79,8 @@ public class MainActivity extends AppCompatActivity {
 
     private void changeFragmentToSearchedMovies(final String query) {
         this.CURRENT_FLOW = Util.MOVIE_LIST_FLOW_SEARCH;
+        setSubtitle(true, "Search: " + query);
+
         MovieListFragment fragment = new MovieListFragment();
 
         Bundle bundle = new Bundle();
@@ -130,8 +151,7 @@ public class MainActivity extends AppCompatActivity {
 
         switch (this.CURRENT_FLOW) {
             case Util.MOVIE_LIST_FLOW_SEARCH:
-                closeSearchBox();
-                changeFragmentToPopularMovies();
+                closeSearchBoxAndGoToPopularMovies();
                 break;
             default:
                 if (doubleBackToExitPressedOnce) {
@@ -151,6 +171,11 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private void closeSearchBoxAndGoToPopularMovies() {
+        closeSearchBox();
+        changeFragmentToPopularMovies();
+    }
+
     void closeSearchBox() {
         if (!searchView.isIconified()) {
             searchView.setQuery("", false);
@@ -161,5 +186,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void bindUI() {
         this.toolbar_title = findViewById(R.id.toolbar_title);
+        this.actionBar_subtitle = findViewById(R.id.actionBar_subtitle);
+        this.imageView_arrowBack = findViewById(R.id.imageView_arrowBack);
     }
 }

@@ -180,7 +180,7 @@ public class MovieListFragment extends Fragment implements Callback<FoundMovies>
                 //Toast.makeText(getContext(), "An error has occurred within successful response", Toast.LENGTH_SHORT).show();
             }
         } else {
-            Toast.makeText(getContext(), "Se produjo un error con los parametros de llamada", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(getContext(), "An error has ben occurred with the API call", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -191,5 +191,12 @@ public class MovieListFragment extends Fragment implements Callback<FoundMovies>
             //Toast.makeText(getContext(), getString(R.string.error_occurred), Toast.LENGTH_SHORT).show();
             Toast.makeText(getContext(), "An error has been occurred", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    @Override
+    public void onDestroy() {
+        // We must to cancel the API Request if we are destroying this fragment
+        if (foundMoviesCall != null) foundMoviesCall.cancel();
+        super.onDestroy();
     }
 }

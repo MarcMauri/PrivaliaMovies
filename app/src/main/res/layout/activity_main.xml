@@ -10,10 +10,15 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <!-- Incrustamos el Toolbar -->
+        <!-- Add the common toolbar -->
         <include
             android:id="@+id/toolbar"
             layout="@layout/toolbar" />
+
+        <!-- Add the section title -->
+        <include
+            android:id="@+id/subtitle"
+            layout="@layout/subtitle" />
 
         <!-- The main content view -->
         <FrameLayout
