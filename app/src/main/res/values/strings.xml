@@ -15,4 +15,6 @@
     <string name="layout_description_return_to_home">Back arrow to return to popular movies</string>
     <string name="layout_description_app_icon">The app icon</string>
     <string name="layout_notice_loading_new_content">Loading new content…</string>
+
+    <string name="menu_action_bar_search">Search</string>
 </resources>

@@ -69,7 +69,7 @@
                 android:layout_marginStart="6dp"
                 android:gravity="center_vertical"
                 android:maxLines="2"
-                android:textColor="#FFF"
+                android:textColor="@color/colorPrimaryLight"
                 android:textSize="@dimen/text_size_movie_title"
                 android:textStyle="bold" />
 
@@ -81,7 +81,7 @@
                 android:layout_marginStart="6dp"
                 android:layout_marginTop="10dp"
                 android:gravity="start"
-                android:textColor="#FFF"
+                android:textColor="@color/colorPrimaryLight"
                 android:textSize="@dimen/text_size_movie_overview" />
 
         </LinearLayout>

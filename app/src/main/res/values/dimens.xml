@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="text_size_subtitle">16sp</dimen>
-    <dimen name="text_size_hint_content_loading">21sp</dimen>
-    <dimen name="text_size_movie_year">14sp</dimen>
-    <dimen name="text_size_movie_overview">13sp</dimen>
-    <dimen name="text_size_movie_title">15sp</dimen>
+    <dimen name="text_size_hint_content_loading">20sp</dimen>
+    <dimen name="text_size_movie_year">15sp</dimen>
+    <dimen name="text_size_movie_overview">14sp</dimen>
+    <dimen name="text_size_movie_title">16sp</dimen>
 </resources>
