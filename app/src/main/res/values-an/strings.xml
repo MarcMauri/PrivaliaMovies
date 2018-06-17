@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">PrivaliaMovies</string>
+
+    <string name="activity_main_subtitle_popular_movies">Películas populares</string>
+    <string name="activity_main_searchview_hint">Buscar película…</string>
+    <string name="activity_main_subtitle_search_tag">Búsqueda:</string>
+    <string name="activity_main_before_exit_notice">Pulsar atrás otra vez para salir</string>
+    <string name="fragment_movie_list_no_more_movies_available">No hay más películas para mostrar</string>
+    <string name="fragment_movie_list_api_response_no_more_results">No se encontraron resultados</string>
+    <string name="fragment_movie_list_api_response_internal_error">Ha ocurrido un error inesperado</string>
+    <string name="fragment_movie_list_api_failure_connection_error">No se pudo conectar con el servidor HTTP</string>
+
+    <string name="layout_description_movie_picture">El póster de la película</string>
+    <string name="layout_description_return_to_home">Flecha atrás para volver a películas populares</string>
+    <string name="layout_description_app_icon">El icono de la app</string>
+    <string name="layout_notice_loading_new_content">Cargando nuevo contenido…</string>
+
+    <string name="menu_action_bar_search">Buscar</string>
+</resources>

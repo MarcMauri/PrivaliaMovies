@@ -1,3 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">PrivaliaMovies</string>
+
+    <string name="activity_main_subtitle_popular_movies">Popular movies</string>
+    <string name="activity_main_searchview_hint">Search movies…</string>
+    <string name="activity_main_subtitle_search_tag">Search:</string>
+    <string name="activity_main_before_exit_notice">Back again to exit</string>
+    <string name="fragment_movie_list_no_more_movies_available">No more movies to show</string>
+    <string name="fragment_movie_list_api_response_no_more_results">Not results found</string>
+    <string name="fragment_movie_list_api_response_internal_error">An internal error has been occurred</string>
+    <string name="fragment_movie_list_api_failure_connection_error">Could not connect to the HTTP server</string>
+
+    <string name="layout_description_movie_picture">The poster of the movie</string>
+    <string name="layout_description_return_to_home">Back arrow to return to popular movies</string>
+    <string name="layout_description_app_icon">The app icon</string>
+    <string name="layout_notice_loading_new_content">Loading new content…</string>
+
+    <string name="menu_action_bar_search">Search</string>
 </resources>
