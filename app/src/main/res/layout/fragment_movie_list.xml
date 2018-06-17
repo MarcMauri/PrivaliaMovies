@@ -37,7 +37,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:text="@string/layout_notice_loading_new_content"
-                android:textSize="21sp" />
+                android:textSize="@dimen/text_size_hint_content_loading" />
 
         </LinearLayout>
 
