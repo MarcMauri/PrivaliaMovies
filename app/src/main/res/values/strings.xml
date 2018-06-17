@@ -1,7 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">PrivaliaMovies</string>
 
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="activity_main_subtitle_popular_movies">Popular movies</string>
     <string name="activity_main_searchview_hint">Search movies…</string>
     <string name="activity_main_subtitle_search_tag">Search:</string>
