@@ -14,7 +14,7 @@
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:layout_marginStart="6dp"
-        android:contentDescription="Descripcion de la flecha atras"
+        android:contentDescription="@string/layout_description_return_to_home"
         android:src="@drawable/ic_arrow_back"
         android:visibility="gone" />
 

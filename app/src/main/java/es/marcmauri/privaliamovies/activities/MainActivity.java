@@ -78,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void changeFragmentToSearchedMovies(final String query) {
         this.CURRENT_FLOW = Util.APP_FLOW_SEARCH;
-        setSubtitle(true, getString(R.string.main_activity_subtitle_search_tag) + " " + query);
+        setSubtitle(true, getString(R.string.activity_main_subtitle_search_tag) + " " + query);
 
         Bundle bundle = new Bundle();
         bundle.putInt(Util.FRAGMENT_BUNDLE_PROPERTY_FLOW, Util.APP_FLOW_SEARCH);
@@ -182,7 +182,7 @@ public class MainActivity extends AppCompatActivity {
                     super.onBackPressed();
                 } else {
                     this.doubleBackToExitPressedOnce = true;
-                    Toast.makeText(this, R.string.main_activity_before_exit_notice, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, R.string.activity_main_before_exit_notice, Toast.LENGTH_SHORT).show();
 
                     new Handler().postDelayed(new Runnable() {
 

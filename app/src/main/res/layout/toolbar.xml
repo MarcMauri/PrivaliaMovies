@@ -12,7 +12,7 @@
         android:layout_width="60dp"
         android:layout_height="60dp"
         android:layout_gravity="center"
-        android:contentDescription="PrivaliaMovies icon"
+        android:contentDescription="@string/layout_description_app_icon"
         android:src="@mipmap/ic_launcher_foreground" />
 
     <TextView

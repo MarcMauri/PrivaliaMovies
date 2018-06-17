@@ -22,7 +22,7 @@
             android:layout_height="225dp"
             android:layout_alignParentTop="true"
             android:background="@color/colorPrimaryText"
-            android:contentDescription="Descripcion movie poster" />
+            android:contentDescription="@string/layout_description_movie_picture" />
 
         <android.support.v7.widget.CardView
             android:id="@+id/cardView_year"
@@ -77,11 +77,10 @@
                 android:id="@+id/textView_overview"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignBottom="@+id/textView_title"
                 android:layout_marginEnd="6dp"
                 android:layout_marginStart="6dp"
                 android:layout_marginTop="10dp"
-                android:gravity="left"
+                android:gravity="start"
                 android:textColor="#FFF" />
 
         </LinearLayout>
