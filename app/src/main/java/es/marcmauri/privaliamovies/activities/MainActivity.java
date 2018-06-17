@@ -137,8 +137,9 @@ public class MainActivity extends AppCompatActivity {
             public boolean onClose() {
                 // Show app name again
                 toolbar_title.setVisibility(View.VISIBLE);
-                // And show popular movies again
-                changeFragmentToPopularMovies();
+                // And show popular movies again if we are on SEARCH FLOW
+                if (CURRENT_FLOW == Util.MOVIE_LIST_FLOW_SEARCH)
+                    changeFragmentToPopularMovies();
                 return false;
             }
         });
