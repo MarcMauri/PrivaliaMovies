@@ -75,8 +75,8 @@ public class MovieListFragment extends Fragment implements Callback<FoundMovies>
         /* Get data from Bundle */
         MOVIE_LIST_FLOW = getArguments().getInt(
                 Util.FRAGMENT_BUNDLE_PROPERTY_FLOW,
-                Util.MOVIE_LIST_FLOW_POPULAR);
-        if (MOVIE_LIST_FLOW == Util.MOVIE_LIST_FLOW_SEARCH) {
+                Util.APP_FLOW_POPULAR);
+        if (MOVIE_LIST_FLOW == Util.APP_FLOW_SEARCH) {
             MOVIE_LIST_QUERY = getArguments().getString(Util.FRAGMENT_BUNDLE_PROPERTY_QUERY, "");
         }
 
@@ -84,7 +84,7 @@ public class MovieListFragment extends Fragment implements Callback<FoundMovies>
         setRecyclerView();
 
         /* Get movies if possible. Otherwise clear movie list */
-        if (MOVIE_LIST_FLOW == Util.MOVIE_LIST_FLOW_SEARCH
+        if (MOVIE_LIST_FLOW == Util.APP_FLOW_SEARCH
                 && TextUtils.isEmpty(MOVIE_LIST_QUERY))
             clearMovieList();
         else
@@ -136,7 +136,7 @@ public class MovieListFragment extends Fragment implements Callback<FoundMovies>
         MoviesService service = API.getTmdbApi().create(MoviesService.class);
 
         switch (MOVIE_LIST_FLOW) {
-            case Util.MOVIE_LIST_FLOW_SEARCH:
+            case Util.APP_FLOW_SEARCH:
                 foundMoviesCall = service.getMoviesByQuery(
                         MOVIE_LIST_QUERY,
                         page,

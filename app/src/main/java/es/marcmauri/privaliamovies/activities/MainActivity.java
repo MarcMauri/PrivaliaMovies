@@ -46,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
 
-        // Set subtitle back arrow behavior
+        // Set back arrow behavior (into subtitle layout)
         this.imageView_arrowBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -65,29 +65,27 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void changeFragmentToPopularMovies() {
-        this.CURRENT_FLOW = Util.MOVIE_LIST_FLOW_POPULAR;
-        setSubtitle(false, "Popular movies");
-
-        MovieListFragment fragment = new MovieListFragment();
+        this.CURRENT_FLOW = Util.APP_FLOW_POPULAR;
+        setSubtitle(false, getString(R.string.activity_main_subtitle_popular_movies));
 
         Bundle bundle = new Bundle();
-        bundle.putInt(Util.FRAGMENT_BUNDLE_PROPERTY_FLOW, Util.MOVIE_LIST_FLOW_POPULAR);
-        fragment.setArguments(bundle);
+        bundle.putInt(Util.FRAGMENT_BUNDLE_PROPERTY_FLOW, Util.APP_FLOW_POPULAR);
 
+        MovieListFragment fragment = new MovieListFragment();
+        fragment.setArguments(bundle);
         changeFragment(fragment);
     }
 
     private void changeFragmentToSearchedMovies(final String query) {
-        this.CURRENT_FLOW = Util.MOVIE_LIST_FLOW_SEARCH;
-        setSubtitle(true, "Search: " + query);
-
-        MovieListFragment fragment = new MovieListFragment();
+        this.CURRENT_FLOW = Util.APP_FLOW_SEARCH;
+        setSubtitle(true, getString(R.string.main_activity_subtitle_search_tag) + " " + query);
 
         Bundle bundle = new Bundle();
-        bundle.putInt(Util.FRAGMENT_BUNDLE_PROPERTY_FLOW, Util.MOVIE_LIST_FLOW_SEARCH);
+        bundle.putInt(Util.FRAGMENT_BUNDLE_PROPERTY_FLOW, Util.APP_FLOW_SEARCH);
         bundle.putString(Util.FRAGMENT_BUNDLE_PROPERTY_QUERY, query);
-        fragment.setArguments(bundle);
 
+        MovieListFragment fragment = new MovieListFragment();
+        fragment.setArguments(bundle);
         changeFragment(fragment);
     }
 
@@ -96,80 +94,6 @@ public class MainActivity extends AppCompatActivity {
                 .beginTransaction()
                 .replace(R.id.content_frame, fragment)
                 .commit();
-    }
-
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.action_bar_menu, menu);
-
-        MenuItem searchItem = menu.findItem(R.id.menu_search);
-        searchView = (SearchView) searchItem.getActionView();
-        searchView.setQueryHint("Search movies...");
-        searchView.setOnSearchClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Hide app name when search button is pressed
-                toolbar_title.setVisibility(View.GONE);
-            }
-        });
-
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                // Do nothing, just hide the keyboard
-                searchView.clearFocus();
-                return true;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                // if query available get the those movies
-                if (!TextUtils.isEmpty(newText))
-                    changeFragmentToSearchedMovies(newText);
-                return false;
-            }
-        });
-
-        searchView.setOnCloseListener(new SearchView.OnCloseListener() {
-            @Override
-            public boolean onClose() {
-                // Show app name again
-                toolbar_title.setVisibility(View.VISIBLE);
-                // And show popular movies again if we are on SEARCH FLOW
-                if (CURRENT_FLOW == Util.MOVIE_LIST_FLOW_SEARCH)
-                    changeFragmentToPopularMovies();
-                return false;
-            }
-        });
-
-        return true;
-    }
-
-    @Override
-    public void onBackPressed() {
-
-        switch (this.CURRENT_FLOW) {
-            case Util.MOVIE_LIST_FLOW_SEARCH:
-                closeSearchBoxAndGoToPopularMovies();
-                break;
-            default:
-                if (doubleBackToExitPressedOnce) {
-                    super.onBackPressed();
-                } else {
-                    this.doubleBackToExitPressedOnce = true;
-                    Toast.makeText(this, "Back again to exit", Toast.LENGTH_SHORT).show();
-
-                    new Handler().postDelayed(new Runnable() {
-
-                        @Override
-                        public void run() {
-                            doubleBackToExitPressedOnce = false;
-                        }
-                    }, 2500);
-                }
-        }
     }
 
     private void closeSearchBoxAndGoToPopularMovies() {
@@ -189,5 +113,85 @@ public class MainActivity extends AppCompatActivity {
         this.toolbar_title = findViewById(R.id.toolbar_title);
         this.actionBar_subtitle = findViewById(R.id.actionBar_subtitle);
         this.imageView_arrowBack = findViewById(R.id.imageView_arrowBack);
+    }
+
+
+    /* EVENTS */
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.action_bar_menu, menu);
+
+        MenuItem searchItem = menu.findItem(R.id.menu_search);
+        searchView = (SearchView) searchItem.getActionView();
+        searchView.setQueryHint(getString(R.string.activity_main_searchview_hint));
+
+        searchView.setOnSearchClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Hide app name when search button is pressed
+                toolbar_title.setVisibility(View.GONE);
+            }
+        });
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                // Do nothing, just hide the keyboard
+                searchView.clearFocus();
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                // if query available then ask for the search results in the related fragment
+                if (!TextUtils.isEmpty(newText))
+                    changeFragmentToSearchedMovies(newText);
+                return false;
+            }
+        });
+
+        searchView.setOnCloseListener(new SearchView.OnCloseListener() {
+            @Override
+            public boolean onClose() {
+                // Show app name again
+                toolbar_title.setVisibility(View.VISIBLE);
+                // And show popular movies again if we are on SEARCH FLOW
+                if (CURRENT_FLOW == Util.APP_FLOW_SEARCH)
+                    changeFragmentToPopularMovies();
+                return false;
+            }
+        });
+
+        return true;
+    }
+
+    @Override
+    public void onBackPressed() {
+        /* When we press back button:
+            case 1 > We are on SEARCH FLOW => We return to POPULAR FLOW ~ The search ends.
+            case 2 > We are on another flow: POPULAR FLOW => We make a double validation before exit.
+        */
+        switch (this.CURRENT_FLOW) {
+            case Util.APP_FLOW_SEARCH:
+                closeSearchBoxAndGoToPopularMovies();
+                break;
+            default:
+                if (doubleBackToExitPressedOnce) {
+                    super.onBackPressed();
+                } else {
+                    this.doubleBackToExitPressedOnce = true;
+                    Toast.makeText(this, R.string.main_activity_before_exit_notice, Toast.LENGTH_SHORT).show();
+
+                    new Handler().postDelayed(new Runnable() {
+
+                        @Override
+                        public void run() {
+                            doubleBackToExitPressedOnce = false;
+                        }
+                    }, 2500);
+                }
+        }
     }
 }
