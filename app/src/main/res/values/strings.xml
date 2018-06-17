@@ -7,4 +7,8 @@
     <string name="activity_main_searchview_hint">Search movies...</string>
     <string name="main_activity_subtitle_search_tag">Search:</string>
     <string name="main_activity_before_exit_notice">Back again to exit</string>
+    <string name="fragment_movie_list_no_more_movies_available">No more movies to show</string>
+    <string name="fragment_movie_list_api_response_no_more_results">Not results found</string>
+    <string name="fragment_movie_list_api_response_internal_error">An internal error has been occurred</string>
+    <string name="fragment_movie_list_api_failure_connection_error">Could not connect to the HTTP server</string>
 </resources>

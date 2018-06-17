@@ -34,8 +34,8 @@ import retrofit2.Response;
  */
 public class MovieListFragment extends Fragment implements Callback<FoundMovies> {
 
-    private int MOVIE_LIST_FLOW;
-    private String MOVIE_LIST_QUERY;
+    private int APP_FLOW;
+    private String SEARCH_QUERY;
 
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
@@ -44,7 +44,6 @@ public class MovieListFragment extends Fragment implements Callback<FoundMovies>
     private int totalPages;
     private int nextPage = 1;
     private boolean loading = false;
-    int pastVisibleItems, visibleItemCount, totalItemCount;
     private LinearLayout linearLayout_progressbar;
 
     private List<Movie> movies;
@@ -54,7 +53,6 @@ public class MovieListFragment extends Fragment implements Callback<FoundMovies>
     public MovieListFragment() {
         // Required empty public constructor
     }
-
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -73,22 +71,17 @@ public class MovieListFragment extends Fragment implements Callback<FoundMovies>
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recyclerView_movies);
 
         /* Get data from Bundle */
-        MOVIE_LIST_FLOW = getArguments().getInt(
-                Util.FRAGMENT_BUNDLE_PROPERTY_FLOW,
-                Util.APP_FLOW_POPULAR);
-        if (MOVIE_LIST_FLOW == Util.APP_FLOW_SEARCH) {
-            MOVIE_LIST_QUERY = getArguments().getString(Util.FRAGMENT_BUNDLE_PROPERTY_QUERY, "");
+        APP_FLOW = getArguments().getInt(Util.FRAGMENT_BUNDLE_PROPERTY_FLOW, Util.APP_FLOW_POPULAR);
+        if (APP_FLOW == Util.APP_FLOW_SEARCH) {
+            SEARCH_QUERY = getArguments().getString(Util.FRAGMENT_BUNDLE_PROPERTY_QUERY, "");
         }
 
         /* Configure recyclerview */
         setRecyclerView();
 
         /* Get movies if possible. Otherwise clear movie list */
-        if (MOVIE_LIST_FLOW == Util.APP_FLOW_SEARCH
-                && TextUtils.isEmpty(MOVIE_LIST_QUERY))
-            clearMovieList();
-        else
-            getMovies(nextPage);
+        if (APP_FLOW == Util.APP_FLOW_SEARCH && TextUtils.isEmpty(SEARCH_QUERY)) clearMovieList();
+        else getMovies(nextPage);
 
         return view;
     }
@@ -104,13 +97,13 @@ public class MovieListFragment extends Fragment implements Callback<FoundMovies>
                 super.onScrolled(recyclerView, dx, dy);
 
                 // Here get the child count, item count and visible items from layout manager
-                visibleItemCount = mLayoutManager.getChildCount();
-                totalItemCount = mLayoutManager.getItemCount();
-                pastVisibleItems = ((LinearLayoutManager) mLayoutManager).findFirstVisibleItemPosition();
+                int visibleItemCount = mLayoutManager.getChildCount();
+                int totalItemCount = mLayoutManager.getItemCount();
+                int pastVisibleItems = ((LinearLayoutManager) mLayoutManager).findFirstVisibleItemPosition();
 
                 // Just when we go down
                 if (dy > 0) {
-                    // Check if not loading and we are on bottom
+                    // Check if not loading and if we are on bottom
                     if (!loading && (totalItemCount - visibleItemCount) <= (pastVisibleItems)) {
                         loading = true;
                         ++nextPage;
@@ -119,7 +112,10 @@ public class MovieListFragment extends Fragment implements Callback<FoundMovies>
                             linearLayout_progressbar.setVisibility(View.VISIBLE);
                             getMovies(nextPage);
                         } else {
-                            Toast.makeText(getContext(), "No more movies to show", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(
+                                    getContext(),
+                                    R.string.fragment_movie_list_no_more_movies_available,
+                                    Toast.LENGTH_SHORT).show();
                         }
                     }
                 }
@@ -132,13 +128,12 @@ public class MovieListFragment extends Fragment implements Callback<FoundMovies>
 
     private void getMovies(int page) {
         linearLayout_progressbar.setVisibility(View.VISIBLE);
-
         MoviesService service = API.getTmdbApi().create(MoviesService.class);
 
-        switch (MOVIE_LIST_FLOW) {
+        switch (APP_FLOW) {
             case Util.APP_FLOW_SEARCH:
                 foundMoviesCall = service.getMoviesByQuery(
-                        MOVIE_LIST_QUERY,
+                        SEARCH_QUERY,
                         page,
                         Util.getDeviceLanguage(getContext()),
                         API.TMDB_KEY);
@@ -177,10 +172,16 @@ public class MovieListFragment extends Fragment implements Callback<FoundMovies>
                 mAdapter.notifyDataSetChanged();
 
             } else {
-                //Toast.makeText(getContext(), "An error has occurred within successful response", Toast.LENGTH_SHORT).show();
+                Toast.makeText(
+                        getContext(),
+                        R.string.fragment_movie_list_api_response_no_more_results,
+                        Toast.LENGTH_SHORT).show();
             }
         } else {
-            //Toast.makeText(getContext(), "An error has ben occurred with the API call", Toast.LENGTH_SHORT).show();
+            Toast.makeText(
+                    getContext(),
+                    R.string.fragment_movie_list_api_response_internal_error,
+                    Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -188,8 +189,11 @@ public class MovieListFragment extends Fragment implements Callback<FoundMovies>
     public void onFailure(Call<FoundMovies> call, Throwable t) {
         if (!foundMoviesCall.isCanceled()) {
             linearLayout_progressbar.setVisibility(View.GONE);
-            //Toast.makeText(getContext(), getString(R.string.error_occurred), Toast.LENGTH_SHORT).show();
-            Toast.makeText(getContext(), "An error has been occurred", Toast.LENGTH_SHORT).show();
+            loading = false;
+            Toast.makeText(
+                    getContext(),
+                    R.string.fragment_movie_list_api_failure_connection_error,
+                    Toast.LENGTH_SHORT).show();
         }
     }
 
